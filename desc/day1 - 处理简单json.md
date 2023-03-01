@@ -27,13 +27,17 @@ func New(args ...any) *Engine {
 
 ```go
 func (engine *Engine) Get(url string) (*Res, error) {
-	var builder strings.Builder
-	builder.WriteString(string(engine.BaseUrl))
-	if len(url) > 8 && url[:7] != "http://" && url[:8] != "https://" {
-		builder.WriteString(url)
+	//var builder strings.Builder
+	//builder.WriteString(string(engine.BaseUrl))
+	//if len(url) > 8 && url[:7] != "http://" && url[:8] != "https://" {
+	//	builder.WriteString(url)
+	//}
+    //url拼接判断逻辑有问题，现在改成这样day2
+	if len(url) < 8 || (url[:7] != "http://" && url[:8] != "https://") {
+		url = string(engine.BaseUrl) + url
 	}
     //进行标准库请求
-	html, err := http.Get(builder.String())
+	html, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
