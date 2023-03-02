@@ -1,6 +1,7 @@
 package json
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 )
@@ -63,11 +64,14 @@ func (j *Data) Val() any {
 }
 
 // String 获取字符串
-func (j *Data) String() (string, error) {
-	if s, ok := (j.data).(string); ok {
-		return s, nil
+func (j *Data) String() string {
+	var out bytes.Buffer
+	res, err := json.Marshal(j.data)
+	if err != nil {
+		return ""
 	}
-	return "", errors.New("type assertion to string failed")
+	_ = json.Indent(&out, res, "", "\t")
+	return out.String()
 }
 
 // Float64 获取浮点数
@@ -109,12 +113,6 @@ func (j *Data) Arrays() ([]*Data, error) {
 // GetVal 直接根据Key获取值
 func (j *Data) GetVal(key string) any {
 	return j.Get(key).Val()
-}
-
-// GetString 直接根据Key获取字符串
-func (j *Data) GetString(key string) string {
-	v, _ := j.Get(key).String()
-	return v
 }
 
 // GetFloat64 直接根据Key获取浮点数

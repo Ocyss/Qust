@@ -2,6 +2,7 @@ package qust
 
 import (
 	"net/http"
+	urlpkg "net/url"
 )
 
 var (
@@ -43,14 +44,9 @@ func (engine *Engine) Ask(method string, url string) *Req {
 	if len(url) < 8 || (url[:7] != "http://" && url[:8] != "https://") {
 		url = string(engine.BaseUrl) + url
 	}
+	u, _ := urlpkg.Parse(url)
 	//生成一个请求体
-	req := &Req{Url: url, Method: method, Client: engine.Client, Query: map[string]any{}}
-	//支持其他协议
-	request, err := http.NewRequest(method, url, nil)
-	if err != nil {
-		panic(err)
-	}
-	req.Request = request
+	req := &Req{u, method, map[string]any{}, engine.Client, nil, make(http.Header)}
 	return req
 }
 
