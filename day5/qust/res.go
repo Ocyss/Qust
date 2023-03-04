@@ -9,6 +9,7 @@ import (
 	"golang.org/x/text/transform"
 	"io"
 	"net/http"
+	qfile "qust/convert/file"
 	qhtml "qust/convert/html"
 	qjson "qust/convert/json"
 	"strings"
@@ -39,6 +40,11 @@ func (res *Res) Html() (*qhtml.Data, error) {
 		return nil, err
 	}
 	return qhtml.New(doc), nil
+}
+
+// File 获取File数据
+func (res *Res) File() *qfile.Data {
+	return qfile.New(res.Body)
 }
 
 // Encoding 进行编码
