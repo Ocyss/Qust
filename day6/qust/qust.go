@@ -1,14 +1,19 @@
 package qust
 
 import (
+	"context"
+	"errors"
+	"fmt"
+	"golang.org/x/net/proxy"
+	"net"
 	"net/http"
 	urlpkg "net/url"
 )
 
 var (
-	defaultBaseUrl BaseUrl      = ""
-	defaultClient  *http.Client = nil
-	defaultVersion              = 2
+	defaultBaseUrl BaseUrl = ""
+	defaultClient          = &http.Client{}
+	defaultVersion         = 2
 )
 
 type (
@@ -40,6 +45,30 @@ func New(args ...any) *Engine {
 		}
 	}
 	return &Engine{BaseUrl: baseUrl, Client: client, Version: version}
+}
+
+func (engine *Engine) SetProxy(protocol string, address string) error {
+	httpTransport := &http.Transport{}
+	switch protocol {
+	case "SOCKS5":
+		dialer, err := proxy.SOCKS5("tcp", address, nil, proxy.Direct)
+		if err != nil {
+			return err
+		}
+		httpTransport.DialContext = func(ctx context.Context, network, address string) (net.Conn, error) {
+			return dialer.Dial("tcp", address)
+		}
+	case "HTTPS", "HTTP":
+		urlproxy, err := urlpkg.Parse(fmt.Sprintf("%s://%s", protocol, address))
+		if err != nil {
+			return err
+		}
+		httpTransport.Proxy = http.ProxyURL(urlproxy)
+	default:
+		return errors.New("only SOCKS5 is supported HTTPS,HTTP,protocol")
+	}
+	engine.Client.Transport = httpTransport
+	return nil
 }
 
 func (engine *Engine) Ask(method string, url string) *Req {
