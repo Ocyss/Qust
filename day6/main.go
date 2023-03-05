@@ -7,7 +7,7 @@ import (
 
 func main() {
 	q := qust.New() //可以指定根网址
-	err := q.SetProxy("SOCKS5", "127.0.0.1:10808")
+	err := q.SetProxy("HTTP", "127.0.0.1:10809")
 	if err != nil {
 		panic(err)
 	}

@@ -21,18 +21,14 @@ func (engine *Engine) SetProxy(protocol string, address string) error {
 		httpTransport.DialContext = func(ctx context.Context, network, address string) (net.Conn, error) {
 			return dialer.Dial("tcp", address)
 		}
-	case "HTTPS":
-		urlproxy, err := urlpkg.Parse(fmt.Sprintf("https://%s", address))
+	case "HTTPS", "HTTP":
+		urlproxy, err := urlpkg.Parse(fmt.Sprintf("%s://%s", protocol, address))
 		if err != nil {
 			return err
 		}
 		httpTransport.Proxy = http.ProxyURL(urlproxy)
-	case "HTTP":
-		urlproxy, err := urlpkg.Parse(fmt.Sprintf("http://%s", address))
-		if err != nil {
-			return err
-		}
-		httpTransport.Proxy = http.ProxyURL(urlproxy)
+	default:
+		return errors.New("only SOCKS5 is supported HTTPS,HTTP,protocol")
 	}
 	engine.Client.Transport = httpTransport
 	return nil
