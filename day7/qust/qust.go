@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"golang.org/x/net/proxy"
+	"math/rand"
 	"net"
 	"net/http"
 	urlpkg "net/url"
@@ -25,6 +26,7 @@ type Engine struct {
 	BaseUrl BaseUrl
 	Client  *http.Client
 	Version int
+	Proxys  *Proxys
 }
 
 // New 创建Qust
@@ -71,14 +73,33 @@ func (engine *Engine) SetProxy(protocol string, address string) error {
 	return nil
 }
 
+func (engine *Engine) SetProxys(proxys []string, mode int) *Proxys {
+	p := &Proxys{proxys, 0, len(proxys), mode}
+	engine.Proxys = p
+	return p
+}
+
 func (engine *Engine) Ask(method string, url string) *Req {
 	//url拼接
 	if len(url) < 8 || (url[:7] != "http://" && url[:8] != "https://") {
 		url = string(engine.BaseUrl) + url
 	}
 	u, _ := urlpkg.Parse(url)
+	p := ""
+	if engine.Proxys != nil {
+		switch engine.Proxys.Mode {
+		case 0:
+			p = engine.Proxys.Proxy[engine.Proxys.Index]
+			engine.Proxys.Index++
+			if engine.Proxys.Index == engine.Proxys.Size {
+				engine.Proxys.Index = 0
+			}
+		case 1:
+			p = engine.Proxys.Proxy[rand.Intn(engine.Proxys.Size)]
+		}
+	}
 	//生成一个请求体
-	req := &Req{u, method, map[string]any{}, engine.Client, nil, make(http.Header)}
+	req := &Req{u, method, map[string]any{}, engine.Client, nil, make(http.Header), p}
 	return req
 }
 

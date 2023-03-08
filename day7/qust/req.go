@@ -20,6 +20,7 @@ type Req struct {
 	Client *http.Client
 	Body   io.Reader
 	Header http.Header
+	Proxy  string
 }
 type DataType string
 
@@ -52,11 +53,7 @@ func dataEncoding(args []any) (res map[string]string) {
 }
 
 func (req *Req) Do() (*Res, error) {
-	//判断有没有指定Client，没有就使用默认
-	client := http.DefaultClient
-	if req.Client != nil {
-		client = req.Client
-	}
+	client := req.Client
 	//进行param拼接
 	params := url.Values{}
 	for k, v := range req.Query {
@@ -69,6 +66,13 @@ func (req *Req) Do() (*Res, error) {
 	//发送请求
 	Req, err := http.NewRequest(req.Method, req.Url.String(), req.Body)
 	Req.Header = req.Header
+	if req.Proxy != "" {
+		urlproxy, err := url.Parse(req.Proxy)
+		if err != nil {
+			return nil, err
+		}
+		client.Transport = &http.Transport{Proxy: http.ProxyURL(urlproxy)}
+	}
 	response, err := client.Do(Req)
 	if err != nil {
 		return nil, err
