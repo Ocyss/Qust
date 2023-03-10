@@ -3,9 +3,10 @@
     <img src="https://qiu-blog.oss-cn-hangzhou.aliyuncs.com/Article/1677503330021120612.png" alt="Logo" width="180" height="180">
   </a>
   <h1 align="center">Qust</h1>
-  <h3 align="center">15天从0实现的爬虫框架</h3>
+  <h3 align="center">7天从0实现的爬虫框架</h3>
 > 听说Go语言是出了名的造轮子语言，打算新写个项目（造轮子），项目主旨就是简单，轻量，方便的爬虫。
 >
+
 
 
 下面是标准库进行简单的`JSON`爬取，不管是解析`JSON`，还是获取数据，都异常麻烦，需要写大量的错误判断，和解析代码，面对复杂的`JSON`更是头疼，需要一直反射还可能会遇到错误，这个框架就是为了简化这些操作，让代码简洁并且容错高，错误处理方便。
@@ -48,7 +49,7 @@ func main() {
   - [ ] 高并发
   - [x] 模拟表单Form提交
 - [ ] 反爬
-  - [ ] 代理池
+  - [x] 代理池
   - [x] 方便的添加headers
   - [ ] 随机生成ua
   - [ ] 可等待js渲染完在爬取html
@@ -57,18 +58,10 @@ func main() {
 
 ## 目录
 
-- 第一天：
-- 第二天：
-- 第三天：
-- 第四天：
-- 第五天：
-- 第六天：
-- 第七天：
-- 第八天：
-- 第九天：
-- 第十天：
-- 第十一天：
-- 第十二天：
-- 第十三天：
-- 第十四天：
-- 第十五天：
+- 第一天：[处理简单json](https://xn--xe4a.cf/post/8)
+- 第二天：[完善其他方法和Header,Query添加](https://xn--xe4a.cf/post/9)
+- 第三天：[设置数据Body和cookie](https://xn--xe4a.cf/post/10)
+- 第四天：[完善Html方法](https://xn--xe4a.cf/post/11)
+- 第五天：[完善File方法](https://xn--xe4a.cf/post/12)
+- 第六天：[支持Http和Socks代理](https://xn--xe4a.cf/post/13)
+- 第七天：[完善代理池](https://xn--xe4a.cf/post/15)
